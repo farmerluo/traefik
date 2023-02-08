@@ -27,7 +27,7 @@ TRAEFIK_ENVS := \
 	-e IN_DOCKER=true		# Indicator for integration tests that we are running inside a container.
 
 TRAEFIK_MOUNT := -v "$(CURDIR)/dist:/go/src/github.com/traefik/traefik/dist"
-DOCKER_RUN_OPTS := "--network host" $(TRAEFIK_ENVS) $(TRAEFIK_MOUNT) "$(TRAEFIK_DEV_IMAGE)"
+DOCKER_RUN_OPTS := --network host $(TRAEFIK_ENVS) $(TRAEFIK_MOUNT) "$(TRAEFIK_DEV_IMAGE)"
 DOCKER_NON_INTERACTIVE ?= false
 DOCKER_RUN_TRAEFIK := docker run $(INTEGRATION_OPTS) $(if $(DOCKER_NON_INTERACTIVE), , -it) $(DOCKER_RUN_OPTS)
 DOCKER_RUN_TRAEFIK_TEST := docker run --add-host=host.docker.internal:127.0.0.1 --rm --name=traefik --network traefik-test-network -v $(PWD):$(PWD) -w $(PWD) $(INTEGRATION_OPTS) $(if $(DOCKER_NON_INTERACTIVE), , -it) $(DOCKER_RUN_OPTS)
