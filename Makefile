@@ -46,20 +46,20 @@ dist:
 .PHONY: build-dev-image
 build-dev-image: dist
 ifneq ("$(IN_DOCKER)", "")
-	docker build $(DOCKER_BUILD_ARGS) -t "$(TRAEFIK_DEV_IMAGE)" --build-arg HOST_PWD="$(PWD)" -f build.Dockerfile .
+	docker build --network host $(DOCKER_BUILD_ARGS) -t "$(TRAEFIK_DEV_IMAGE)" --build-arg HOST_PWD="$(PWD)" -f build.Dockerfile .
 endif
 
 ## Build Dev Docker image without cache
 .PHONY: build-dev-image-no-cache
 build-dev-image-no-cache: dist
 ifneq ("$(IN_DOCKER)", "")
-	docker build $(DOCKER_BUILD_ARGS) --no-cache -t "$(TRAEFIK_DEV_IMAGE)" --build-arg HOST_PWD="$(PWD)" -f build.Dockerfile .
+	docker build --network host $(DOCKER_BUILD_ARGS) --no-cache -t "$(TRAEFIK_DEV_IMAGE)" --build-arg HOST_PWD="$(PWD)" -f build.Dockerfile .
 endif
 
 ## Build WebUI Docker image
 .PHONY: build-webui-image
 build-webui-image:
-	docker build -t traefik-webui -f webui/Dockerfile webui
+	docker build --network host -t traefik-webui -f webui/Dockerfile webui
 
 ## Clean WebUI static generated assets
 .PHONY: clean-webui
@@ -143,17 +143,17 @@ validate: build-dev-image
 ## Clean up static directory and build a Docker Traefik image
 .PHONY: build-image
 build-image: clean-webui binary
-	docker build -t $(TRAEFIK_IMAGE) .
+	docker build --network host -t $(TRAEFIK_IMAGE) .
 
 ## Build a Docker Traefik image without re-building the webui
 .PHONY: build-image-dirty
 build-image-dirty: binary
-	docker build -t $(TRAEFIK_IMAGE) .
+	docker build --network host -t $(TRAEFIK_IMAGE) .
 
 ## Locally build traefik for linux, then shove it an alpine image, with basic tools.
 .PHONY: build-image-debug
 build-image-debug: binary-debug
-	docker build -t $(TRAEFIK_IMAGE) -f debug.Dockerfile .
+	docker build --network host -t $(TRAEFIK_IMAGE) -f debug.Dockerfile .
 
 ## Start a shell inside the build env
 .PHONY: shell
